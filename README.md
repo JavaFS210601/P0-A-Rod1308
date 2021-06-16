@@ -44,6 +44,7 @@ You should run the following commands frequently to save your local changes to y
 
 Make sure you're in your cloned repo or attempting to push won't work! You'll see (main) at the end of your file path if you're in the correct spot
 
+## ----------------------------------------------------------------
 Help each other but don't do each other's work!!! If you cheat you're only cheating yourself blah blah blah
 
 Have fun and learn as much as you can
