@@ -7,8 +7,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import com.revature.models.Schedule;
-import com.revature.models.Train;
 import com.revature.models.User;
 import com.revature.utils.ConnectionUtil;
 
@@ -90,5 +88,46 @@ public class UserDao implements UserDaoInterface {
 			System.out.println("Add User failed!");
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void updateFirstName(String fName, String user) {
+		try(Connection conn = ConnectionUtil.getConnection()) {
+			
+			String sql = "update user_info set f_name = ? where user_name = ?;"; //write out the SQL query
+			
+			PreparedStatement ps = conn.prepareStatement(sql); //put the SQL query into a PreparedStatement
+			
+			//set the values in the prepared statement with the values inputed by the user
+			ps.setString(1, fName);
+			ps.setString(2, user);
+			ps.executeUpdate(); 
+		
+			
+		} catch (SQLException e) {
+			System.out.println("you BROKE IT you messed up it's all ruined because of YOU >:(");
+			e.printStackTrace();
+		}
+		
+	}
+	@Override
+	public void updateLastName(String lName, String user) {
+		try(Connection conn = ConnectionUtil.getConnection()) {
+			
+			String sql = "update user_info set l_name = ? where user_name = ?;"; //write out the SQL query
+			
+			PreparedStatement ps = conn.prepareStatement(sql); //put the SQL query into a PreparedStatement
+			
+			//set the values in the prepared statement with the values inputed by the user
+			ps.setString(1, lName);
+			ps.setString(2, user);
+			ps.executeUpdate(); 
+		
+			
+		} catch (SQLException e) {
+			System.out.println("you BROKE IT you messed up it's all ruined because of YOU >:(");
+			e.printStackTrace();
+		}
+		
 	}
 }

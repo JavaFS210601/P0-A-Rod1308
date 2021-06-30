@@ -1,14 +1,15 @@
 package com.revature.models;
 
 import java.util.ArrayList;
-
-import java.util.InputMismatchException;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Scanner;
 
 import com.revature.daos.ScheduleDao;
 import com.revature.daos.TicketDao;
 import com.revature.daos.TrainDao;
+import com.revature.daos.UserDao;
 import com.revature.utils.UserLoginSignup;
 import com.revature.utils.Validation;
 
@@ -16,24 +17,32 @@ public class Menu {
 	
 	//initial menu isn't logged into
 	boolean login = false;
+	String userName = "";
+	int index = 0;
+	
 	
 	
 	TrainDao trainDao = new TrainDao();
 	ScheduleDao scheduleDao = new ScheduleDao();
 	TicketDao ticketDao = new TicketDao();
+	UserDao userDao = new UserDao();
 	
 	Validation val = new Validation();
 	Scanner scan = new Scanner(System.in); //Scanner object to parse user input
+	
+	ArrayList<User> userList = new ArrayList<>();
+	Map<String, String> credentials = new HashMap<String, String>();
+
 	
 	
 	//Menu message
 	private String menuOptions() {
 		String y = "'Stations': Search Travel Location\n"
 				+ "'Ticket': Search up Ticket\n"
-				+ "'Previous Ticket': All previous tickets\n"
+				+ "'Previous': All previous tickets\n"
 				+ "'Schedule': stations and stops\n"
-				+ "'Sign out'\n"
-				+ "'exit'";
+				+ "'Account': to view and edit User\n"
+				+ "'LogOut'\n";
 		
 		String n = "'Login': to Access or make an account\n"
 				+ "'Stations': Search Stations\n"
@@ -52,17 +61,14 @@ public class Menu {
 		boolean displayMenu = true; //this will toggle whether the menu continues after user input
 		System.out.println(login);
 		
-		
-			
-		System.out.println("Welcome !\n");
-		
 		//display the menu options as long as displayMenu is true.
+		String options = menuOptions();
 		while(displayMenu) {		
 			
-			System.out.println("CHOOSE AN OPTION:\n\n");
-			
 			//menu options
-			String options = menuOptions();
+			clearScreen();
+			System.out.println("Welcome " + userName +" !\n");
+			System.out.println("CHOOSE AN OPTION:\n");
 			System.out.println(options);
 			
 			//checks which option user chose
@@ -78,13 +84,20 @@ public class Menu {
 	private boolean checkSelection(String input) {
 		
 		//Checks for empty string
-		if (!(input.equals(null))) {
+		if (!(input.isEmpty())) {
 			
 			//switches over user input
 			switch (input.toLowerCase().trim()) {
 
 			case "login": {
-				UserLoginSignup.display();
+				
+				UserLoginSignup.display(credentials);
+				break;
+			}
+			
+			case "logout": {
+
+				UserLoginSignup.logOut();
 				break;
 			}
 
@@ -94,18 +107,44 @@ public class Menu {
 			}
 
 			case "ticket": {
-				System.out.println("prompt for confirmation num and return ticket info");
+				System.out.println("Enter Confirmation Number:\n");
+				int num = Integer.parseInt(scan.next().trim());
 				ArrayList<Ticket> allTickets = ticketDao.getAllTickets();
 				for (Ticket t : allTickets)
-					System.out.println(t.toString());
+					if(t.confirmation_num == num)
+						System.out.println(t.toString());
 				break;
 				
 			}
+			case "previous": {
+				
+				
+				ArrayList<Ticket> allTickets = ticketDao.getAllTickets();
+				String name = userList.get(index).firstName + " " + userList.get(index).lastName;
+				System.out.println(name);
+				for (Ticket t : allTickets)
+					
+					if(t.passenger_name.equals(name)) {
+						System.out.println(t.toString());
+					}
+				break;
+
+			}
+			
 
 			case "schedule": {
 
-				ticketDao.addTicket(new Ticket(3, "Added User", "GreenLand", "06:45:00"));
-				//	cd.addCar(new Car(tireInput, colorInput)); 	
+				//ticketDao.addTicket(new Ticket(3, "Added User", "GreenLand", "06:45:00"));
+				ArrayList<Schedule> scList = scheduleDao.getSchedule();
+				for (Schedule s : scList) 
+					System.out.println(s.toString());
+				scan.next();
+				break;
+			}
+			case "account": {
+				User account = returnUser();
+				System.out.println(account.toString());
+				caseEditUser(account);
 				break;
 			}
 
@@ -135,6 +174,55 @@ public class Menu {
 	}
 	
 	
+	private void caseEditUser(User account) {
+		boolean loop = true;
+		while (loop) {
+			System.out.println("----------------\n" + "'Edit' : to edit\n" + "'Exit' : to return\n");
+			String e = scan.nextLine().trim();
+			if (e.equals("edit")) {
+				editMenu(account.userName);
+				loop = false;
+			} else if (e.equals("exit")) {
+				System.out.println("Returning...");
+				loop = false;
+			} 
+		}
+			
+	}
+
+	private void editMenu(String u) {
+		boolean loop = true;
+		while (loop) {
+			System.out.println("What field would you like to update?\n" + "'First' to eddit first name\n"
+					+ "'Last' to eddit last name\n" + "'Exit'");
+			String s = scan.nextLine().trim().toLowerCase();
+			switch (s) {
+			case "first":{
+				System.out.println("new first name:\n");
+				String x = scan.nextLine().trim();
+				userDao.updateFirstName(x, u);
+				System.out.println("Success!");
+				break;
+				}
+			case "last":{
+				System.out.println("new last name:\n");
+				String x = scan.nextLine().trim();
+				userDao.updateLastName(x, u);
+				System.out.println("Success!");
+				break;
+				}		
+			case "exit":{
+				System.out.println("Returning...");
+				loop = false;
+				break;
+				}		
+			default:
+				// code block
+			}
+		}
+		
+	}
+
 	private void init() {
 		
 		
@@ -178,9 +266,10 @@ public class Menu {
 			String i = scan.nextLine().trim().toLowerCase();
 			
 			if(avalibleLocations.contains(i)) {
-				//searchAvalibleTickets();
+				createTicket(i);
 			}else if(i.equals("exit")) {
 				System.out.println("Returning...");
+				clearScreen();
 				x = false;
 			}
 			
@@ -190,17 +279,56 @@ public class Menu {
 
 
 
+	private void createTicket(String targetLocation) {
+		
+		ArrayList<Train> trList = trainDao.getTrains();
+		ArrayList<Schedule> scList = scheduleDao.getSchedule();
+		ArrayList<Ticket> tList = ticketDao.getAllTickets();
+		User u = returnUser();
+		String name = u.firstName + " " + u.lastName;
+		
+//		Ticket t = new Ticket(
+//				tList.size(),
+//				name,
+//				
+//				);
+	}
+
 	private User returnUser() {
-		return null;
+		return userList.get(index);
+		//might be -1
 	}
 
 	private void clearScreen() {
-		System.out.print("\033[H\033[2J");  
-	    System.out.flush();  
-		
+		for (int i = 0; i < 20; i++) {
+			System.out.println(); 
+			
+		}
 	}
 	
-	public void toggleLogin(String userName, boolean x) {
-		login = x;
+	public void toggleLogin(String userName, boolean login, int index) {
+		
+		this.userName = userName;
+		this.login = login;
+		this.index = index;
+	}
+
+	public void loadUsers() {
+//		User x = new User("F name","L Name" , "201-08-13","A-Rod","Password");
+//		userDao.addUser(x);
+		userList = userDao.getUser();
+	//	int  i= 0;
+		for (User u : userList) {
+			System.out.println(u.toString());
+			credentials.put(u.userName, u.password);
+	//		i++;
+		}
+	//	System.out.println(i);
+		//index = i;
+//		for (Map.Entry<String, String> k : credentials.entrySet()) {
+//			System.out.println(k.getKey() + k.getValue());
+//			
+//		}
+		
 	}
 }

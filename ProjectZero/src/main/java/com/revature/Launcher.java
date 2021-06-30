@@ -18,8 +18,9 @@ public class Launcher {
 			System.out.println("Error Conection faild");
 		}
 		
-		Menu menu = new Menu();
 		
+		Menu menu = new Menu();
+		menu.loadUsers();
 		menu.display();
 
 	}

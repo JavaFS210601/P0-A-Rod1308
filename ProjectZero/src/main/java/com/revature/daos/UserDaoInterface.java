@@ -12,5 +12,8 @@ public interface UserDaoInterface {
 	
 	public void addUser(User u);
 	
+	public void updateFirstName(String fName, String user);
+	public void updateLastName(String lName, String user);
+	
 
 }
