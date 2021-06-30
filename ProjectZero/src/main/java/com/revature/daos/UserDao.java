@@ -67,13 +67,13 @@ public class UserDao implements UserDaoInterface {
 			
 			PreparedStatement ps = conn.prepareStatement(sql); //we use PreparedStatements for SQL commands with parameters
 			
-			System.out.println(u.toString());
+			///System.out.println(u.toString());
 		
-			System.out.println("1");
+			//System.out.println("1");
 			ps.setString(1, u.getFirstName());
-			System.out.println("2");
+			//System.out.println("2");
 			ps.setString(2, u.getLastName()); //this takes our Java Date, and turns it into a SQL Date.
-			System.out.println("3");
+			//System.out.println("3");
 			ps.setString(3, u.getDateOfBirth());
 			ps.setString(4, u.getUserName());
 			ps.setString(5, u.getPassword());
@@ -82,7 +82,7 @@ public class UserDao implements UserDaoInterface {
 			ps.executeUpdate(); //we use executeUpdate for inserts, updates, and deletes. 
 			
 			//send confirmation to the console if successful
-			System.out.println("New User" + u.getUserName() );
+			System.out.println("New User : " + u.getUserName() );
 			
 		} catch(SQLException e) {
 			System.out.println("Add User failed!");

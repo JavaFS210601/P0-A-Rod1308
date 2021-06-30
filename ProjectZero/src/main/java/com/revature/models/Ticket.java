@@ -47,6 +47,13 @@ public class Ticket extends Schedule{
 		this.departure_time = departure_time;
 	}
 	
+	public void display() {
+		System.out.println(
+				"Confirmation num: " + confirmation_num + "\tPassenger name: " + passenger_name
+				+ "\n Departure station: " + departure_station + "\tDeparture time: " + departure_time
+				);
+	}
+	
 	@Override
 	public String toString() {
 		return "Ticket [confirmation_num=" + confirmation_num + ", passenger_name=" + passenger_name

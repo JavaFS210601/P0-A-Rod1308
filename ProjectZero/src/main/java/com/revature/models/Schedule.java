@@ -43,6 +43,13 @@ public class Schedule extends Train {
 	public void setArrival_location(String arrival_location) {
 		this.arrival_location = arrival_location;
 	}
+	
+	public void display() {
+		System.out.println(
+				"Depature date= " + depature_day + "\nCurrent station= " + current_station + "\nArrival location="
+						+ arrival_location 
+				);
+	}
 
 	@Override
 	public String toString() {

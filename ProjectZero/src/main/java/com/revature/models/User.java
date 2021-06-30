@@ -73,6 +73,14 @@ public class User {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+	
+	public void display() {
+		
+		System.out.println(
+				"Name: " + firstName + " " + lastName + "\tBirth Date: " + dateOfBirth
+				+ "\nUserName: " + userName );
+		
+	}
 
 
 	@Override
@@ -80,6 +88,9 @@ public class User {
 		return "User [firstName=" + firstName + ", lastName=" + lastName + ", dateOfBirth=" + dateOfBirth
 				+ ", userName=" + userName + ", password=" + password + "]";
 	}
+
+
+	
 
 
 

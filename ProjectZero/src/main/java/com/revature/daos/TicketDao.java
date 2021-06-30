@@ -34,7 +34,7 @@ public class TicketDao implements TicketDaoInterface{
 			
 			
 			ArrayList<Ticket> ticketList = new ArrayList<>(); //create a List that will be populated with the returned employees
-			System.out.println(rs);
+			//System.out.println(rs);
 			
 			
 			while(rs.next()) { //while there are results left in the ResultSet (rs)

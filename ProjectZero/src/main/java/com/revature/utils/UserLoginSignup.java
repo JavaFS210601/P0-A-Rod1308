@@ -86,10 +86,10 @@ public class UserLoginSignup {
 					String dateOfBirth = getDate();
 					while (!(dateOfBirth.isEmpty())) {
 
-						System.out.println("Username");
+						System.out.println("Username:");
 						String userName = sc.nextLine();
 
-						while ((!(userNameSet.contains(userName))) && (userName.trim().length() > 5)) {
+						while ((!(userNameSet.contains(userName))) && ((!userName.isEmpty()))) {
 
 							System.out.println(
 									"Password (8-20 characters) :\n\t1+ Uppercase\n\t 2+ numbers\n\t allowed symbols [@#$%^&]");

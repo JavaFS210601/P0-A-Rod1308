@@ -8,6 +8,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Scanner;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.revature.daos.ScheduleDao;
 import com.revature.daos.TicketDao;
 import com.revature.daos.TrainDao;
@@ -21,6 +24,8 @@ public class Menu {
 	boolean login = false;
 	String userName = "";
 	int index = 0;
+	
+	final Logger log = LogManager.getLogger(Menu.class);
 	
 	
 	
@@ -44,13 +49,13 @@ public class Menu {
 				+ "'Previous': All previous tickets\n"
 				+ "'Schedule': stations and stops\n"
 				+ "'Account': to view and edit User\n"
-				+ "'LogOut'\n";
+				+ "'LogOut'\n\n\n";
 		
 		String n = "'Login': to Access or make an account\n"
 				+ "'Stations': Search Stations\n"
 				+ "'Ticket': Search up Ticket\n"			
 				+ "'Schedule': stations and stops\n"
-				+ "'exit'";
+				+ "'exit'\n\n\n";
 		
 		return (login) ? y : n;
 		
@@ -61,7 +66,7 @@ public class Menu {
 		
 		
 		boolean displayMenu = true; //this will toggle whether the menu continues after user input
-		System.out.println(login);
+	//	System.out.println(login);----------------------------------------------------------------------------------------
 		
 		//display the menu options as long as displayMenu is true.
 		String options = menuOptions();
@@ -76,6 +81,7 @@ public class Menu {
 			//checks which option user chose
 			String input = scan.nextLine();
 			displayMenu = checkSelection(input);
+			clearScreen();
 			
 		}
 		
@@ -92,39 +98,60 @@ public class Menu {
 			switch (input.toLowerCase().trim()) {
 
 			case "login": {
-				
+				log.info("User Logging in");
+				clearScreen();
 				UserLoginSignup.display(credentials);
+				clearScreen();
 				break;
 			}
 			
 			case "logout": {
-
+				log.info("User Logging out");
+				clearScreen();
 				UserLoginSignup.logOut();
+				clearScreen();
 				break;
 			}
 
 			case "stations": {
+				clearScreen();
 				caseStation();
+				clearScreen();
 				break;
 			}
 
 			case "ticket": {
-				System.out.println("Enter Confirmation Number:\n");
-				int num = Integer.parseInt(scan.next().trim());
-				ArrayList<Ticket> allTickets = ticketDao.getAllTickets();
-				for (Ticket t : allTickets)
-					if(t.confirmation_num == num)
-						System.out.println(t.toString());
+				clearScreen();
+				Boolean loop = true;
+				while(loop) {
+					System.out.println("Enter Confirmation Number:\n");
+					String s = scan.next().trim();
+					int num = Integer.parseInt(s);
+					ArrayList<Ticket> allTickets = ticketDao.getAllTickets();
+					for (Ticket t : allTickets) {
+						if (t.confirmation_num == num) {
+							t.display();
+							System.out.println();
+							loop = false;
+						}
+					}
+				}
+				
+				pressEnter();
+				clearScreen();
 				break;
 				
 			}
 			case "previous": {
+				clearScreen();
 				ArrayList<Ticket> allTickets = ticketDao.getAllTickets();
 				String name = userList.get(index-1).firstName + " " + userList.get(index-1).lastName;
-				System.out.println(name);
+				System.out.println(name.toUpperCase() + "\n");
 				for (Ticket t : allTickets) {
 					if(t.passenger_name.equals(name)) {
-						System.out.println(t.toString());
+						System.out.println("==========================================\n");
+						t.display();;
+						System.out.println("\n==========================================");
 					}
 				}
 				System.out.println("\nType:\n'Delete': to delete a ticket\n'Exit'");
@@ -133,6 +160,7 @@ public class Menu {
 					deleteTicket();
 				}else if(p.equals("exit"))
 					System.out.println("Returning ...");
+				clearScreen();
 				break;
 
 			}
@@ -142,15 +170,24 @@ public class Menu {
 
 				//ticketDao.addTicket(new Ticket(3, "Added User", "GreenLand", "06:45:00"));
 				ArrayList<Schedule> scList = scheduleDao.getSchedule();
-				for (Schedule s : scList) 
-					System.out.println(s.toString());
-				scan.next();
+				
+				for (Schedule s : scList) {
+					System.out.println("------------------------------\n");
+					s.display();
+					System.out.println("\n");
+				}
+				System.out.println("------------------------------");
+				pressEnter();
 				break;
+				
+				
 			}
 			case "account": {
+				clearScreen();
 				User account = returnUser();
-				System.out.println(account.toString());
+				account.display();
 				caseEditUser(account);
+				clearScreen();
 				break;
 			}
 
@@ -160,12 +197,20 @@ public class Menu {
 			}
 			
 			case "admin": {
-				init();
+				
+				clearScreen();
+				//init();
+				for (User u : userList) {
+						System.out.println(u.toString());
+			
+						}
+				clearScreen();
 			}
 
 			//this default block will catch anything that doesn't match a menu option
 			default: {
 				System.out.println("Please try again");
+				clearScreen();
 				break;
 			}
 			}
@@ -173,6 +218,7 @@ public class Menu {
 		}
 		else {
 			System.out.println("Please try again");
+			clearScreen();
 			return true;
 		}
 		return true;
@@ -200,9 +246,11 @@ public class Menu {
 			String e = scan.nextLine().trim();
 			if (e.equals("edit")) {
 				editMenu(account.userName);
+				clearScreen();
 				loop = false;
 			} else if (e.equals("exit")) {
 				System.out.println("Returning...");
+				clearScreen();
 				loop = false;
 			} 
 		}
@@ -221,6 +269,7 @@ public class Menu {
 				String x = scan.nextLine().trim();
 				userDao.updateFirstName(x, u);
 				System.out.println("Success!");
+				clearScreen();
 				break;
 				}
 			case "last":{
@@ -228,11 +277,13 @@ public class Menu {
 				String x = scan.nextLine().trim();
 				userDao.updateLastName(x, u);
 				System.out.println("Success!");
+				clearScreen();
 				break;
 				}		
 			case "exit":{
 				System.out.println("Returning...");
 				loop = false;
+				clearScreen();
 				break;
 				}		
 			default:
@@ -303,7 +354,7 @@ public class Menu {
 	}
 
 	private void clearScreen() {
-		for (int i = 0; i < 20; i++) {
+		for (int i = 0; i < 40; i++) {
 			System.out.println(); 
 			
 		}
@@ -315,6 +366,15 @@ public class Menu {
 		this.login = login;
 		this.index = index;
 	}
+	
+	 private void pressEnter()
+	 { 
+	        System.out.println("Press Enter key to continue...");
+	        try
+	        {System.in.read();}  
+	        catch(Exception e)
+	        {}  
+	 }
 
 	public void loadUsers() {
 //		User x = new User("F name","L Name" , "201-08-13","A-Rod","Password");
@@ -322,7 +382,7 @@ public class Menu {
 		userList = userDao.getUser();
 	//	int  i= 0;
 		for (User u : userList) {
-			System.out.println(u.toString());
+	//		System.out.println(u.toString()); ----------------------------------------------------------
 			credentials.put(u.userName, u.password);
 	//		i++;
 		}

@@ -1,0 +1,12 @@
+2021-06-30 09:12:12 INFO  Menu:100 - User Logging in
+2021-06-30 09:12:31 INFO  Menu:158 - User info has been updated
+2021-06-30 09:12:44 INFO  Menu:107 - User Logging out
+2021-06-30 10:10:24 INFO  Menu:100 - User Logging in
+2021-06-30 10:14:45 INFO  Menu:101 - User Logging in
+2021-06-30 10:18:43 INFO  Menu:101 - User Logging in
+2021-06-30 10:23:31 INFO  Menu:101 - User Logging in
+2021-06-30 10:32:44 INFO  Menu:101 - User Logging in
+2021-06-30 10:33:47 INFO  Menu:109 - User Logging out
+2021-06-30 10:33:57 INFO  Menu:101 - User Logging in
+2021-06-30 10:47:43 INFO  Menu:101 - User Logging in
+2021-06-30 10:50:28 INFO  Menu:101 - User Logging in
