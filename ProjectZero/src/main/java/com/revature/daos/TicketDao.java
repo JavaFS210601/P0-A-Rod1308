@@ -75,4 +75,27 @@ public class TicketDao implements TicketDaoInterface{
 		
 	}
 
+	@Override
+	public void deleteTicket(int confirmationNum) {
+		
+		try(Connection conn = ConnectionUtil.getConnection()){
+			
+			String sql = "DELETE FROM Ticket WHERE confirmation_num = ?;";
+			
+			PreparedStatement ps = conn.prepareStatement(sql);
+			
+			ps.setInt(1, confirmationNum);
+			
+			if(ps.executeUpdate() != 0) {
+				System.out.println("yes");
+			}
+			
+			System.out.println("Ticket num: " + confirmationNum + " has been deleted");
+			
+		} catch (SQLException e) {
+			System.out.println("Delete employee failed!");
+			e.printStackTrace();
+		}
+	}
+
 }

@@ -1,6 +1,8 @@
 package com.revature.models;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -117,16 +119,20 @@ public class Menu {
 				
 			}
 			case "previous": {
-				
-				
 				ArrayList<Ticket> allTickets = ticketDao.getAllTickets();
-				String name = userList.get(index).firstName + " " + userList.get(index).lastName;
+				String name = userList.get(index-1).firstName + " " + userList.get(index-1).lastName;
 				System.out.println(name);
-				for (Ticket t : allTickets)
-					
+				for (Ticket t : allTickets) {
 					if(t.passenger_name.equals(name)) {
 						System.out.println(t.toString());
 					}
+				}
+				System.out.println("\nType:\n'Delete': to delete a ticket\n'Exit'");
+				String p = scan.nextLine().trim().toLowerCase();
+				if (p.equals("delete")) {
+					deleteTicket();
+				}else if(p.equals("exit"))
+					System.out.println("Returning ...");
 				break;
 
 			}
@@ -150,7 +156,7 @@ public class Menu {
 
 			case "exit": {
 				System.out.println("Have a good day!");
-				return false;
+				System.exit(0);;
 			}
 			
 			case "admin": {
@@ -174,6 +180,19 @@ public class Menu {
 	}
 	
 	
+	private void deleteTicket() {
+		System.out.println("Please enter Ticket Confimation nm\n");
+		int i = scan.nextInt();
+		ArrayList<Ticket> tList = ticketDao.getAllTickets();
+		
+		for (Ticket t : tList)
+			if (i == t.confirmation_num) {
+				ticketDao.deleteTicket(t.confirmation_num);
+			}
+		
+		
+	}
+
 	private void caseEditUser(User account) {
 		boolean loop = true;
 		while (loop) {
@@ -250,7 +269,8 @@ public class Menu {
 
 	private void caseStation () {
 		System.out.println("------------------------------");
-		System.out.println("Pick a station to create a new ticket");
+		System.out.println("List of stations");
+		System.out.println("------------------------------\n");
 		ArrayList<Train> trainList = trainDao.getTrains();
 		
 		
@@ -265,9 +285,7 @@ public class Menu {
 			System.out.println("exit");
 			String i = scan.nextLine().trim().toLowerCase();
 			
-			if(avalibleLocations.contains(i)) {
-				createTicket(i);
-			}else if(i.equals("exit")) {
+			if(i.equals("exit")) {
 				System.out.println("Returning...");
 				clearScreen();
 				x = false;
@@ -279,23 +297,8 @@ public class Menu {
 
 
 
-	private void createTicket(String targetLocation) {
-		
-		ArrayList<Train> trList = trainDao.getTrains();
-		ArrayList<Schedule> scList = scheduleDao.getSchedule();
-		ArrayList<Ticket> tList = ticketDao.getAllTickets();
-		User u = returnUser();
-		String name = u.firstName + " " + u.lastName;
-		
-//		Ticket t = new Ticket(
-//				tList.size(),
-//				name,
-//				
-//				);
-	}
-
 	private User returnUser() {
-		return userList.get(index);
+		return userList.get(index-1);
 		//might be -1
 	}
 
